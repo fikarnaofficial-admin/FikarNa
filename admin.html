@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FikarNa Admin — Seller Applications</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0e2240;--gold:#b38236;--paper:#fcfbfa;--ink:#18191b;--muted:#687080;--line:#e9e4da;--green:#1d734d;--greenbg:#eaf5ee;--red:#b3261e;--redbg:#fdf2f2}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif}.wrap{max-width:1100px;margin:auto;padding:28px 20px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:24px}.brand{font-family:'Playfair Display',serif;font-size:30px;color:var(--navy)}.brand b{color:var(--gold)}button{border:0;border-radius:10px;padding:11px 15px;font-weight:700;cursor:pointer}.gold{background:var(--gold);color:#fff}.navy{background:var(--navy);color:#fff}.ghost{background:#fff;border:1px solid var(--line)}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 8px 25px rgba(14,34,64,.06);margin-bottom:18px}h1,h2{color:var(--navy)}h1{font-family:'Playfair Display',serif;font-size:32px;margin:0 0 5px}.muted{color:var(--muted);font-size:13px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.kpi{padding:18px;border:1px solid var(--line);border-radius:14px;background:#fff}.kpi strong{display:block;font-size:28px;color:var(--navy);margin-top:4px}.login{max-width:430px;margin:9vh auto}.login input{width:100%;padding:13px;border:1px solid var(--line);border-radius:10px;margin:7px 0 13px;font:inherit}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:13px 10px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:top}th{color:var(--muted);font-size:12px}.badge{display:inline-block;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:800;text-transform:uppercase}.pending{background:#fff3d8;color:#8a5b00}.approved{background:var(--greenbg);color:var(--green)}.rejected,.suspended{background:var(--redbg);color:var(--red)}.actions{display:flex;gap:7px;flex-wrap:wrap}.error{background:var(--redbg);color:var(--red);border:1px solid #efc9c7;border-radius:12px;padding:12px;margin:12px 0}.success{background:var(--greenbg);color:var(--green);border:1px solid #c6e3d0;border-radius:12px;padding:12px;margin:12px 0}@media(max-width:750px){.grid{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}table{min-width:800px}.tablewrap{overflow:auto}}
+</style>
+</head>
+<body>
+<div id="loginView" class="wrap login">
+  <div class="card">
+    <div class="brand">Fikar<b>Na</b></div>
+    <h1 style="margin-top:20px">Admin Login</h1>
+    <p class="muted">Seller applications and marketplace operations.</p>
+    <div id="loginError" class="error" style="display:none"></div>
+    <form id="loginForm">
+      <label class="muted">Email</label>
+      <input id="email" type="email" required autocomplete="email">
+      <label class="muted">Password</label>
+      <input id="password" type="password" required autocomplete="current-password">
+      <button class="gold" style="width:100%;margin-top:4px" type="submit">Sign in</button>
+    </form>
+  </div>
+</div>
+
+<div id="appView" style="display:none">
+<div class="wrap">
+  <div class="top">
+    <div><div class="brand">Fikar<b>Na</b></div><div class="muted">Seller administration</div></div>
+    <div style="display:flex;gap:8px"><button class="ghost" onclick="loadSellers()">Refresh</button><button class="navy" onclick="signOut()">Sign out</button></div>
+  </div>
+  <div id="appMessage" style="display:none"></div>
+  <div class="grid" style="margin-bottom:18px">
+    <div class="kpi"><span class="muted">Total applications</span><strong id="totalKpi">0</strong></div>
+    <div class="kpi"><span class="muted">Pending</span><strong id="pendingKpi">0</strong></div>
+    <div class="kpi"><span class="muted">Approved</span><strong id="approvedKpi">0</strong></div>
+  </div>
+  <div class="card">
+    <h2 style="margin-top:0">Seller Applications</h2>
+    <p class="muted" style="margin-bottom:16px">Review applications received from FikarNa's public registration form.</p>
+    <div class="tablewrap">
+      <table><thead><tr><th>Shop / Owner</th><th>Mobile</th><th>Locality</th><th>Category</th><th>Status</th><th>Applied</th><th>Action</th></tr></thead>
+      <tbody id="sellerRows"><tr><td colspan="7" class="muted">Loading…</td></tr></tbody></table>
+    </div>
+  </div>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// Standalone admin build: works even when opened directly as a local file.
+window.FIKARNA_SUPABASE_URL = 'https://adpkzdjkxusrivqiymwd.supabase.co';
+window.FIKARNA_SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_YajuNLQndeKW12pdOFmezA_2bqydZc7';
+const sb=window.supabase.createClient(window.FIKARNA_SUPABASE_URL,window.FIKARNA_SUPABASE_PUBLISHABLE_KEY);
+const $=id=>document.getElementById(id);
+function msg(text,type='error'){const el=$('appMessage');el.className=type==='error'?'error':'success';el.textContent=text;el.style.display='block';setTimeout(()=>el.style.display='none',3500)}
+async function signOut(){await sb.auth.signOut();location.reload()}
+async function checkSession(){
+  const {data:{session},error:sessionError}=await sb.auth.getSession();
+  if(sessionError){ $('loginError').textContent=sessionError.message; $('loginError').style.display='block'; return; }
+  if(!session) return;
+  $('loginView').style.display='none';
+  $('appView').style.display='block';
+  await loadSellers();
+}
+$('loginForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const errEl=$('loginError');
+  errEl.style.display='block';
+  errEl.textContent='Signing in…';
+  try {
+    const {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});
+    if(error){
+      errEl.textContent=error.message;
+      return;
+    }
+    if(!data.session){
+      errEl.textContent='Login completed but no session was returned. Check Supabase email confirmation settings.';
+      return;
+    }
+    errEl.style.display='none';
+    await checkSession();
+  } catch(e) {
+    errEl.textContent='Admin login error: '+(e?.message||e);
+  }
+});
+async function loadSellers(){
+  const {data,error}=await sb.rpc('admin_list_sellers');
+  if(error){msg(error.message);return}
+  const rows=data||[]; const pending=rows.filter(x=>x.status==='pending').length; const approved=rows.filter(x=>x.status==='approved').length;
+  $('totalKpi').textContent=rows.length;$('pendingKpi').textContent=pending;$('approvedKpi').textContent=approved;
+  $('sellerRows').innerHTML=rows.length?rows.map(s=>`<tr><td><strong>${esc(s.shop_name||'')}</strong><br><span class="muted">${esc(s.owner_name||'')}</span></td><td>${esc(s.mobile||'')}</td><td>${esc(s.area||'')}</td><td>${esc(s.category||'')}</td><td><span class="badge ${esc(s.status)}">${esc(s.status)}</span></td><td>${new Date(s.created_at).toLocaleString('en-IN')}</td><td>${s.status==='pending'?`<div class="actions"><button class="gold" onclick="setStatus('${s.id}','approved')">Approve</button><button class="ghost" onclick="setStatus('${s.id}','rejected')">Reject</button></div>`:s.status==='approved'?`<button class="ghost" onclick="setStatus('${s.id}','suspended')">Suspend</button>`:`<button class="ghost" onclick="setStatus('${s.id}','approved')">Approve</button>`}</td></tr>`).join(''):'<tr><td colspan="7" class="muted">No applications yet.</td></tr>';
+}
+async function setStatus(id,status){if(status==='rejected'&&!confirm('Reject this seller application?'))return;if(status==='suspended'&&!confirm('Suspend this seller?'))return;const {error}=await sb.rpc('admin_set_seller_status',{p_seller_id:id,p_status:status});if(error){msg(error.message);return}msg('Seller status updated.','success');await loadSellers()}
+function esc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+sb.auth.onAuthStateChange((_event,session)=>{if(!session){$('loginView').style.display='block';$('appView').style.display='none'}});
+checkSession();
+</script>
+</body>
+</html>

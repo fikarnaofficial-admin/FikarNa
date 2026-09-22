@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FikarNa Seller Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0e2240;--navy2:#183b6b;--gold:#b38236;--paper:#f8f7f4;--ink:#18191b;--muted:#687080;--line:#e8e2d8;--green:#1d734d;--greenbg:#eaf5ee;--red:#b3261e;--redbg:#fdf2f2;--shadow:0 14px 40px rgba(14,34,64,.08)}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif}.wrap{max-width:1180px;margin:auto;padding:28px 20px}.brand{font:700 30px 'Playfair Display',serif;color:var(--navy)}.brand b{color:var(--gold)}.muted{color:var(--muted);font-size:13px}.top{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:22px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow);margin-bottom:18px}.btn{border:0;border-radius:10px;padding:11px 15px;font-weight:800;cursor:pointer;font:inherit}.btn:disabled{opacity:.55;cursor:not-allowed}.gold{background:var(--gold);color:#fff}.navy{background:var(--navy);color:#fff}.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}.danger{background:var(--red);color:#fff}.login{max-width:520px;margin:7vh auto}.tabs{display:flex;gap:8px;margin-bottom:18px}.tab{flex:1}.tab.active{background:var(--navy);color:#fff}.input{width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:10px;margin:6px 0 14px;font:inherit;background:#fff}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.msg{padding:12px;border-radius:12px;margin:12px 0;font-size:13px}.error{background:var(--redbg);color:var(--red);border:1px solid #efc9c7}.success{background:var(--greenbg);color:var(--green);border:1px solid #c6e3d0}.info{background:#eef4fb;color:var(--navy);border:1px solid #d5e1ef}.hidden{display:none!important}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.kpi{padding:18px;border:1px solid var(--line);border-radius:14px;background:#fff}.kpi strong{display:block;color:var(--navy);font-size:27px;margin-top:5px}.sectionhead{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px}h1,h2{color:var(--navy)}h1{font:700 34px 'Playfair Display',serif;margin:0 0 5px}h2{font-size:20px}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:top}th{color:var(--muted);font-size:12px}.pill{display:inline-block;padding:5px 9px;border-radius:999px;background:var(--greenbg);color:var(--green);font-size:11px;font-weight:800;text-transform:uppercase}.small{font-size:12px}.empty{text-align:center;padding:35px;color:var(--muted)}.actions{display:flex;gap:7px;flex-wrap:wrap}.modal{position:fixed;inset:0;background:rgba(14,34,64,.45);padding:20px;z-index:20;overflow:auto}.modalbox{max-width:680px;margin:5vh auto}.spinner{display:inline-block;width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;margin-right:7px}@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:800px){.grid{grid-template-columns:1fr 1fr}.formgrid{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}}@media(max-width:520px){.grid{grid-template-columns:1fr}.actions .btn{width:100%}}
+</style>
+</head>
+<body>
+<div id="authView" class="wrap login">
+  <div class="card">
+    <div class="brand">Fikar<b>Na</b></div>
+    <p class="muted">Seller Portal · Apni dukaan ko online laaiye.</p>
+    <div id="connection" class="msg info">Connecting to FikarNa…</div>
+    <div class="tabs"><button id="loginTab" class="btn tab active" type="button" onclick="showAuth('login')">Login</button><button id="signupTab" class="btn tab ghost" type="button" onclick="showAuth('signup')">Create account</button></div>
+    <div id="authMsg" class="msg hidden"></div>
+    <section id="loginBox"><h2>Seller login</h2><form id="loginForm">
+      <label class="muted">Email</label><input id="loginEmail" class="input" type="email" autocomplete="email" required>
+      <label class="muted">Password</label><input id="loginPassword" class="input" type="password" autocomplete="current-password" required>
+      <button id="loginBtn" class="btn gold" style="width:100%">Sign in</button>
+    </form><p class="muted" style="margin-top:14px">Use the email and password created for your seller account.</p></section>
+    <section id="signupBox" class="hidden"><h2>Create seller account</h2><form id="signupForm">
+      <label class="muted">Email</label><input id="signupEmail" class="input" type="email" autocomplete="email" required>
+      <label class="muted">Password</label><input id="signupPassword" class="input" type="password" minlength="6" autocomplete="new-password" required>
+      <button id="signupBtn" class="btn gold" style="width:100%">Create account</button>
+    </form><p class="muted" style="margin-top:14px">Confirm your email if Supabase asks you to, then return and log in.</p></section>
+    <section id="claimBox" class="hidden"><h2>Link your approved shop</h2><p class="muted">Your account is ready. Enter the mobile number from your FikarNa application and the login code generated by Admin.</p>
+      <form id="claimForm"><label class="muted">Application mobile</label><input id="claimMobile" class="input" inputmode="numeric" autocomplete="tel" required>
+      <label class="muted">Seller login code</label><input id="claimCode" class="input" autocomplete="one-time-code" maxlength="8" style="text-transform:uppercase" required>
+      <button id="claimBtn" class="btn gold" style="width:100%">Link approved shop</button></form></section>
+  </div>
+</div>
+
+<div id="appView" class="hidden"><div class="wrap">
+  <div class="top"><div><div class="brand">Fikar<b>Na</b></div><div class="muted">Seller Dashboard</div></div><div class="actions"><button class="btn gold" type="button" onclick="openProduct()">+ Add product</button><button class="btn navy" type="button" onclick="logout()">Sign out</button></div></div>
+  <div id="appMsg" class="msg hidden"></div>
+  <div class="card"><h1 id="shopName">Your Shop</h1><p id="shopMeta" class="muted"></p><span class="pill">Approved seller</span></div>
+  <div class="grid"><div class="kpi"><span class="muted">Products</span><strong id="countProducts">0</strong></div><div class="kpi"><span class="muted">Active</span><strong id="countActive">0</strong></div><div class="kpi"><span class="muted">Orders</span><strong id="countOrders">0</strong></div><div class="kpi"><span class="muted">Shop status</span><strong style="font-size:20px">Live</strong></div></div>
+  <div class="card" style="margin-top:18px"><div class="sectionhead"><div><h2 style="margin:0">Your products</h2><p class="muted">Add the products you want customers to see.</p></div><button class="btn gold" type="button" onclick="openProduct()">Add product</button></div>
+    <div class="tablewrap"><table><thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead><tbody id="productRows"></tbody></table></div>
+  </div>
+  <div class="card"><div class="sectionhead"><div><h2 style="margin:0">Orders</h2><p class="muted">Accept, prepare and complete customer orders for your shop.</p></div><button class="btn ghost" type="button" onclick="loadOrders()">Refresh</button></div>
+    <div id="ordersMsg" class="msg hidden"></div><div class="tablewrap"><table><thead><tr><th>Order</th><th>Items</th><th>Customer</th><th>Fulfilment</th><th>Total</th><th>Status</th><th>Action</th></tr></thead><tbody id="orderRows"></tbody></table></div>
+  </div>
+</div></div>
+
+<div id="productModal" class="modal hidden"><div class="card modalbox"><div class="sectionhead"><div><h2 id="modalTitle" style="margin:0">Add product</h2><p class="muted">Save directly to your FikarNa catalogue.</p></div><button class="btn ghost" type="button" onclick="closeProduct()">Close</button></div>
+  <div id="productMsg" class="msg hidden"></div><form id="productForm"><input type="hidden" id="productId">
+  <label class="muted">Product name</label><input id="pName" class="input" required>
+  <div class="formgrid"><div><label class="muted">Category</label><input id="pCategory" class="input" required placeholder="e.g. Footwear"></div><div><label class="muted">Price (₹)</label><input id="pPrice" class="input" type="number" min="0" step="0.01" required></div></div>
+  <div class="formgrid"><div><label class="muted">Stock</label><input id="pStock" class="input" type="number" min="0" step="1" value="0" required></div><div><label class="muted">Image URL (optional)</label><input id="pImage" class="input" type="url" placeholder="https://..."></div></div>
+  <label class="muted">Description</label><textarea id="pDescription" class="input" rows="4" style="resize:vertical"></textarea>
+  <label style="display:flex;gap:8px;align-items:center;font-size:13px;margin-bottom:14px"><input id="pActive" type="checkbox" checked> Active / visible</label>
+  <button id="saveProductBtn" class="btn gold" style="width:100%">Save product</button></form>
+</div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL='https://adpkzdjkxusrivqiymwd.supabase.co';
+const SUPABASE_KEY='sb_publishable_YajuNLQndeKW12pdOFmezA_2bqydZc7';
+let sb=null, seller=null, products=[], orders=[];
+const $=id=>document.getElementById(id);
+function setMsg(id,text,type='error'){const e=$(id);e.textContent=text;e.className='msg '+type}
+function busy(id,on,label){const b=$(id);if(!b)return;b.disabled=on;if(on)b.innerHTML='<span class="spinner"></span>'+label}
+function showAuth(mode){$('loginBox').classList.toggle('hidden',mode!=='login');$('signupBox').classList.toggle('hidden',mode!=='signup');$('claimBox').classList.add('hidden');$('loginTab').classList.toggle('active',mode==='login');$('signupTab').classList.toggle('active',mode==='signup');$('authMsg').className='msg hidden'}
+function showClaim(){ $('loginBox').classList.add('hidden');$('signupBox').classList.add('hidden');$('claimBox').classList.remove('hidden');$('loginTab').classList.remove('active');$('signupTab').classList.remove('active') }
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+async function init(){
+ try{ if(!window.supabase) throw new Error('Supabase library did not load. Open this portal while connected to the internet.'); sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY); $('connection').textContent='Connected to FikarNa. Ready.'; $('connection').className='msg success';
+  const {data:{session}}=await sb.auth.getSession(); if(session) await routeUser();
+ }catch(e){$('connection').textContent=e.message;$('connection').className='msg error'}
+}
+$('signupForm').onsubmit=async e=>{e.preventDefault();busy('signupBtn',true,'Creating account…');try{const {data,error}=await sb.auth.signUp({email:$('signupEmail').value.trim(),password:$('signupPassword').value});if(error)throw error;showAuth('login');setMsg('authMsg',data.session?'Account created. You can now log in.':'Account created. Check your email for confirmation, then log in.','success')}catch(e){setMsg('authMsg',e.message)}finally{busy('signupBtn',false,'Create account')}};
+$('loginForm').onsubmit=async e=>{e.preventDefault();busy('loginBtn',true,'Signing in…');try{const {error}=await sb.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPassword').value});if(error)throw error;await routeUser()}catch(e){setMsg('authMsg',e.message)}finally{busy('loginBtn',false,'Sign in')}};
+$('claimForm').onsubmit=async e=>{e.preventDefault();busy('claimBtn',true,'Linking shop…');try{const {error}=await sb.rpc('seller_claim_account',{p_mobile:$('claimMobile').value.trim(),p_claim_code:$('claimCode').value.trim().toUpperCase()});if(error)throw error;await routeUser()}catch(e){setMsg('authMsg',e.message)}finally{busy('claimBtn',false,'Link approved shop')}};
+async function routeUser(){const {data:{user}}=await sb.auth.getUser();if(!user)return;const {data:rows,error}=await sb.from('sellers').select('*').eq('owner_id',user.id).limit(1);if(error)throw error;if(rows&&rows[0]){seller=rows[0];await showApp();return}showClaim();setMsg('authMsg','You are signed in. Now link your approved shop using the code from Admin.','info')}
+async function showApp(){$('authView').classList.add('hidden');$('appView').classList.remove('hidden');$('shopName').textContent=seller.shop_name||'Your Shop';$('shopMeta').textContent=[seller.area,seller.category,seller.mobile].filter(Boolean).join(' · ');await loadProducts();await loadOrders()}
+async function loadProducts(){const {data,error}=await sb.rpc('seller_list_products');if(error){setMsg('appMsg',error.message);return}products=data||[];$('countProducts').textContent=products.length;$('countActive').textContent=products.filter(p=>p.is_active!==false).length;$('productRows').innerHTML=products.length?products.map(p=>`<tr><td><strong>${esc(p.name)}</strong><div class="small muted">${esc(p.description||'')}</div></td><td>${esc(p.category||'')}</td><td>₹${(p.price_paise!=null?Number(p.price_paise)/100:Number(p.price||0)).toLocaleString('en-IN')}</td><td>${p.stock??0}</td><td><span class="pill">${p.is_active===false?'Hidden':'Active'}</span></td><td><div class="actions"><button class="btn ghost small" type="button" onclick="editProduct('${p.id}')">Edit</button><button class="btn danger small" type="button" onclick="removeProduct('${p.id}')">Delete</button></div></td></tr>`).join(''):`<tr><td colspan="6" class="empty">No products yet. Click <b>Add product</b> to add your first one.</td></tr>`}
+async function loadOrders(){
+  const {data,error}=await sb.rpc('seller_list_orders');
+  if(error){
+    orders=[];$('countOrders').textContent='0';
+    setMsg('ordersMsg',error.message);
+    $('ordersMsg').className='msg error';
+    $('orderRows').innerHTML='<tr><td colspan="7" class="empty">Orders could not be loaded.</td></tr>';
+    return;
+  }
+  orders=Array.isArray(data)?data:[];
+  $('countOrders').textContent=orders.length;
+  $('ordersMsg').className='msg hidden';
+
+  // Orders use *_paise as the source of truth.
+  // The SQL patch supplied with this file makes seller_list_orders return
+  // these fields. Legacy rupee fields remain supported as a compatibility
+  // fallback so this portal does not break if an older RPC is encountered.
+  const rupees = (obj, paiseKeys, rupeeKeys) => {
+    for (const k of paiseKeys) {
+      const v = obj?.[k];
+      if (v !== null && v !== undefined && v !== '' && Number.isFinite(Number(v))) {
+        return Number(v) / 100;
+      }
+    }
+    for (const k of rupeeKeys) {
+      const v = obj?.[k];
+      if (v !== null && v !== undefined && v !== '' && Number.isFinite(Number(v))) {
+        return Number(v);
+      }
+    }
+    return 0;
+  };
+
+  $('orderRows').innerHTML=orders.length?orders.map(o=>{
+    const items=Array.isArray(o.items)?o.items:[];
+    const itemText=items.map(i=>`${esc(i.product_name||i.name||'Product')} × ${Number(i.quantity||1)}`).join('<br>')||'—';
+    const status=String(o.status||o.order_status||'pending').toLowerCase();
+    const fulfilment=String(o.fulfillment||o.fulfilment||'delivery').toLowerCase();
+
+    const total=rupees(o,['total_paise','total_amount_paise','p_total_paise'],['total_amount','total','total_rupees']);
+    const subtotal=rupees(o,['subtotal_paise','subtotal_amount_paise','p_subtotal_paise'],['subtotal','subtotal_amount','subtotal_rupees']);
+    const delivery=rupees(o,['delivery_fee_paise','delivery_charge_paise','p_delivery_fee_paise'],['delivery_charge','delivery_fee','delivery_rupees']);
+
+    const moneyMissing =
+      !Object.keys(o).some(k => ['total_paise','subtotal_paise','delivery_fee_paise',
+        'total_amount_paise','subtotal_amount_paise','delivery_charge_paise',
+        'total_amount','total','subtotal','delivery_charge','delivery_fee'].includes(k));
+
+    return `<tr>
+      <td><strong>${esc(o.order_number||'—')}</strong><div class="small muted">${o.created_at?new Date(o.created_at).toLocaleString('en-IN'):''}</div></td>
+      <td>${itemText}</td>
+      <td><strong>${esc(o.customer_name||o.name||'Customer')}</strong><div class="small muted">${esc(o.mobile||o.customer_mobile||'')}</div><div class="small muted">${esc(o.address||o.delivery_address||'')}</div></td>
+      <td><span class="pill">${esc(fulfilment.replaceAll('_',' '))}</span></td>
+      <td><strong>₹${total.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})}</strong><div class="small muted">Items ₹${subtotal.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})} · Delivery ₹${delivery.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})}${moneyMissing?' · Run the seller-orders SQL patch':''}</div></td>
+      <td><span class="pill">${esc(status.replaceAll('_',' '))}</span></td>
+      <td><div class="actions">${orderActions(o)}</div></td>
+    </tr>`;
+  }).join(''):'<tr><td colspan="7" class="empty">No orders yet.</td></tr>';
+}
+function orderActions(o){
+  const s=String(o.status||'pending').toLowerCase();
+  const f=String(o.fulfillment||'delivery').toLowerCase();
+  let a=[];
+  if(s==='pending'){
+    a.push(`<button class="btn gold small" type="button" onclick="changeOrderStatus('${o.id}','accepted')">Accept</button>`,
+           `<button class="btn danger small" type="button" onclick="changeOrderStatus('${o.id}','rejected')">Reject</button>`);
+  }else if(s==='accepted'){
+    a.push(`<button class="btn navy small" type="button" onclick="changeOrderStatus('${o.id}','preparing')">Preparing</button>`);
+  }else if(s==='preparing'){
+    const next=f==='pickup'?'ready_for_pickup':'out_for_delivery';
+    const label=f==='pickup'?'Ready for pickup':'Out for delivery';
+    a.push(`<button class="btn navy small" type="button" onclick="changeOrderStatus('${o.id}','${next}')">${label}</button>`);
+  }else if(s==='ready_for_pickup'&&f==='pickup'){
+    a.push(`<button class="btn gold small" type="button" onclick="changeOrderStatus('${o.id}','completed')">Picked up</button>`);
+  }else if(s==='out_for_delivery'&&f==='delivery'){
+    a.push(`<button class="btn gold small" type="button" onclick="changeOrderStatus('${o.id}','completed')">Delivered</button>`);
+  }
+  return a.join('')||'<span class="small muted">No action</span>';
+}
+async function changeOrderStatus(id,status){
+  const label=status.replaceAll('_',' ');
+  if(!confirm(`Change this order to ${label}?`))return;
+  try{
+    const {error}=await sb.rpc('seller_update_order_status',{p_order_id:id,p_status:status});
+    if(error)throw error;
+    setMsg('ordersMsg','Order updated successfully.','success');
+    await loadOrders();
+  }catch(e){setMsg('ordersMsg',e.message)}
+}
+function openProduct(id){$('productModal').classList.remove('hidden');$('productForm').reset();$('productId').value='';$('modalTitle').textContent='Add product';$('pActive').checked=true;$('productMsg').className='msg hidden';if(id)editProduct(id)}
+function closeProduct(){$('productModal').classList.add('hidden')}
+function editProduct(id){const p=products.find(x=>x.id===id);if(!p)return;$('productModal').classList.remove('hidden');$('modalTitle').textContent='Edit product';$('productId').value=p.id;$('pName').value=p.name||'';$('pCategory').value=p.category||'';$('pPrice').value=p.price??'';$('pStock').value=p.stock??0;$('pImage').value=p.image_url||'';$('pDescription').value=p.description||'';$('pActive').checked=p.is_active!==false;$('productMsg').className='msg hidden'}
+$('productForm').onsubmit=async e=>{e.preventDefault();busy('saveProductBtn',true,'Saving…');try{const id=$('productId').value;const args={p_name:$('pName').value.trim(),p_category:$('pCategory').value.trim(),p_price:Number($('pPrice').value),p_stock:Number($('pStock').value),p_image_url:$('pImage').value.trim()||null,p_description:$('pDescription').value.trim()||null};let result;if(id)result=await sb.rpc('seller_update_product',{p_product_id:id,...args});else result=await sb.rpc('seller_add_product',args);if(result.error)throw result.error;closeProduct();setMsg('appMsg','Product saved successfully.','success');await loadProducts()}catch(e){setMsg('productMsg',e.message)}finally{busy('saveProductBtn',false,'Save product')}};
+async function removeProduct(id){if(!confirm('Delete this product?'))return;const {error}=await sb.rpc('seller_delete_product',{p_product_id:id});if(error){setMsg('appMsg',error.message);return}setMsg('appMsg','Product deleted.','success');await loadProducts()}
+async function logout(){await sb.auth.signOut();location.reload()}
+init();
+</script>
+</body></html>
